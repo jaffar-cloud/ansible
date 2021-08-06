@@ -2,4 +2,4 @@
   hosts: all
   tasks:
     - name: Run a command under PowerShell
-      win_shell: Get-Service 
+      win_shell: Get-Service -name wuauserv | stop-service
