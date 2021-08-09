@@ -3,4 +3,4 @@
   tasks:
       ansible.builtin.systemd:
         state: started
-        name: httpd
+        name: apache2
