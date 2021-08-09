@@ -1,0 +1,6 @@
+- name: Linux-Teste
+  hosts: all
+  tasks:
+      ansible.builtin.systemd:
+        state: started
+        name: httpd
