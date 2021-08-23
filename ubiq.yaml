@@ -1,0 +1,37 @@
+- hosts: master
+  become: yes
+  become_method: sudo
+  roles:
+    - common
+    - master
+
+- hosts: master
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: Register Variable Join Command
+    command: kubeadm token create --print-join-command
+    register: join_command
+    become: true
+    become_user: ubiq
+
+- hosts: workers
+  become: yes
+  become_method: sudo
+  roles:
+    - common
+    - worker
+
+- hosts: workers_gpu
+  become: yes
+  become_method: sudo
+  roles:
+    - common
+    - worker_gpu
+    - worker
+
+- hosts: master
+  become: yes
+  become_method: sudo
+  roles:
+    - additional

@@ -1,0 +1,6 @@
+---
+- name: "Install NFS"
+  apt:
+    name: nfs-kernel-server
+    state: present
+    force: yes

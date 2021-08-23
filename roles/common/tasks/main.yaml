@@ -1,0 +1,26 @@
+---
+- name: Update System
+  apt:
+    update_cache: yes     
+
+- name: "Install basic packages"
+  apt: 
+    name: "{{items}}" 
+    state: present
+  vars:
+    items:
+      - git
+      
+- name: "Run Docker Installation"
+  include_tasks: install_docker.yaml
+
+- name: "Run Kubernetes Installation"
+  include_tasks: install_kubernetes.yaml
+
+- name: "Run NFS Installation"
+  include_tasks: install_nfs.yaml
+  
+- name: "Run libvirt-clients Installation"
+  include_tasks: install_libvirt-clients.yaml
+
+  

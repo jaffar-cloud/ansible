@@ -1,0 +1,6 @@
+---
+- name: "Install libvirt-clients"
+  apt:
+    name: libvirt-clients
+    state: present
+    force: yes

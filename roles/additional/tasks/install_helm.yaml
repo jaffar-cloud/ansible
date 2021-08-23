@@ -1,0 +1,18 @@
+---
+- name: Donwload Helm
+  get_url:
+    url: "{{helm.url_version}}"
+    dest: /home/ubiq/get_helm.sh
+
+- name: Grant Permission
+  file:
+    path: /home/ubiq/get_helm.sh
+    mode: '700'
+
+- name: Install Helm
+  shell: bash /home/ubiq/get_helm.sh
+
+- name: Delete Helm Installation File
+  file:
+    path: /home/ubiq/get_helm.sh
+    state: absent

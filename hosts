@@ -1,0 +1,15 @@
+[master]
+127.0.0.1 ansible_user=ubiq ansible_become_password=$password ansible_python_interprete=/usr/bin/python3
+# Set workers IP address
+# Set workers w/GPU IP address
+
+[workers_gpu]
+#x.x.x.x  ansible_user=deepshare ansible_become_password=<password_provided_previously> ansible_python_interprete=/usr/bin/python3
+
+[workers]
+127.0.0.1 ansible_user=ubiq ansible_become_password=$password  ansible_python_interprete=/usr/bin/python3
+#$worker ansible_user=$username ansible_become_password=$password ansible_python_interprete=/usr/bin/python3
+#192.168.xxx.xxx ansible_user=deepshare ansible_become_password=<password_provided_previously> ansible_python_interprete=/usr/bin/python3
+#192.168.xxx.xxx ansible_user=deepshare ansible_become_password=<password_provided_previously> ansible_python_interprete=/usr/bin/python3
+#192.168.xxx.xxx ansible_user=deepshare ansible_become_password=<password_provided_previously> ansible_python_interprete=/usr/bin/python3
+

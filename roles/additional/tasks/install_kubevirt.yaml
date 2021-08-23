@@ -1,0 +1,23 @@
+- name: Install KubeVirt operator
+  command: "kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/v0.42.1/kubevirt-operator.yaml"
+  become_user: ubiq
+
+- name: Install KubeVirt CR
+  command: "kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/v0.42.1/kubevirt-cr.yaml"
+  become_user: ubiq
+
+#- name:  virtctl
+#  command: "sudo wget -O /usr/local/bin/virtctl https://github.com/kubevirt/kubevirt/releases/download/v0.42.1/virtctl-v0.42.1-linux-amd64"
+
+#- name: Install virtctl.
+#  command: "sudo chmod +rx /usr/local/bin/virtctl"
+#  become_user: ubiq
+
+- name: Install cdi Operator
+  command: "kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/v1.30.0/cdi-operator.yaml"
+  become_user: ubiq
+
+- name: Install cdi CR
+  command: "kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/v1.30.0/cdi-cr.yaml"
+  become_user: ubiq
+

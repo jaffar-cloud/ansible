@@ -1,0 +1,18 @@
+---
+- name: "Create Users Directory"
+  file:
+    path: /opt/ubiq
+    state: directory
+    mode: '1777'
+
+
+- name: "Add config to NFS file"
+  vars:
+    mytext: |
+        /opt/ubiq/ *(rw,sync,no_root_squash,subtree_check)
+  copy:
+    content: "{{ mytext }}"
+    dest: /etc/exports
+
+- name: "Update Config File Command"
+  command: exportfs -ra   

@@ -1,0 +1,14 @@
+---
+- name: Copy MinIO to remote 
+  copy:
+    src: "{{playbook_dir}}/utils/minio_deployment.yaml"
+    dest: "/home/ubiq"
+
+- name: Install MinIO 
+  command: "kubectl apply -f /home/ubiq/minio_deployment.yaml"
+  become_user: ubiq
+
+- name: Delete MinIO Installation File
+  file:
+    path: /home/ubiq/minio_deployment.yaml
+    state: absent

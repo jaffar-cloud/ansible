@@ -1,0 +1,74 @@
+---
+- name: Register Varible $HOME
+  shell: echo $HOME
+  register: home
+  become: true
+  become_user: ubiq
+
+- name: Disable Swap
+  command: swapoff -a
+
+- name: Disable swap permanently, persist reboots
+  replace:
+    path: /etc/fstab
+    regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
+    replace: '#\1\2\3swap\4'
+    backup: yes
+
+- name: Reset Cluster
+  command: kubeadm reset -f
+
+- name: Generate UUID
+  command: hostname
+  register: uuid 
+
+- name: Init master
+  command: kubeadm init --node-name {{uuid.stdout}}
+
+- name: Delete Previous Configuration
+  file:
+    path: "{{home.stdout}}/.kube"
+    state: absent
+  
+- name: Set Admin
+  file:
+    path: $HOME/.kube
+    state: directory
+    recurse: yes
+  become: true
+  become_user: ubiq
+
+- name: Register admin.conf
+  command: cat /etc/kubernetes/admin.conf
+  register: adminconf
+
+- name: Create Config File
+  file:
+    path: $HOME/.kube/config
+    state: touch
+  become: true
+  become_user: ubiq
+
+- name: Copy admin.conf
+  shell: echo '{{ adminconf.stdout }}' > $HOME/.kube/config
+  become: true
+  become_user: ubiq
+
+- name: Grant Permission
+  file:
+    path: $HOME/.kube/config
+    owner: "ubiq"
+    group: "ubiq"
+  become: true
+  become_user: ubiq
+
+- name: Applying CNI 
+  shell: kubectl apply -f {{controlplane.cni}}
+  become_user: ubiq
+
+- name: Install Local Path Provisioner
+  shell: kubectl apply -f {{controlplane.localpathprovisioner}}
+  become_user: ubiq
+
+- name: Run NFS Configuration
+  include_tasks: config_nfs.yaml

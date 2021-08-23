@@ -1,0 +1,49 @@
+---
+- name: Add GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Get lsb_release
+  command: lsb_release -cs
+  register: lsb_release
+
+- name: Depedencie Docker
+  shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{lsb_release.stdout}} stable"
+  
+- name: Update Ubuntu
+  apt:
+    update_cache: yes
+    
+- name: "Installing docker packages"
+  apt: 
+    name: "{{items}}" 
+  vars:
+    items:
+      - containerd.io 
+      - docker-ce={{docker.ce}}-{{lsb_release.stdout}}
+      - docker-ce-cli={{docker.ce_cli}}-{{lsb_release.stdout}}
+
+- name: "Create Daemon Config File"
+  file:
+    path: /etc/docker/daemon.json
+    state: touch
+
+- name: "Fill Daemon Config File"
+  command: bash -c 'echo {{json}} > /etc/docker/daemon.json'
+  vars:
+    json: '{\"exec-opts\": [\"native.cgroupdriver=systemd\"],\"log-driver\": \"json-file\",\"log-opts\": { \"max-size\": \"100m\" }, \"storage-driver\": \"overlay2\"}'
+
+- name: Create Docker Service io
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    recurse: yes
+- name: Apt mark recent packages installation
+  command: apt-mark hold containerd.io docker-ce docker-ce-cli
+
+- name: Reload Docker service
+  command: systemctl daemon-reload
+
+- name: Restart Docker service
+  command: systemctl restart docker

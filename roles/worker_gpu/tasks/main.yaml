@@ -1,0 +1,31 @@
+- name: Get Distribution
+  shell: ". /etc/os-release;echo $ID$VERSION_ID"
+  register: distribution
+  become_user: ubiq
+
+- name: Add an Apt signing key, uses whichever key is at the URL
+  apt_key:
+    url: https://nvidia.github.io/nvidia-docker/gpgkey
+    state: present
+
+- name: Add source repository into sources list
+  register: list_nvidia
+  shell: curl -s -L https://nvidia.github.io/nvidia-docker/{{distribution.stdout}}/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list
+  
+- name: Update Ubuntu
+  apt:
+    update_cache: yes
+    
+- name: Install nvidia-docker2
+  apt: 
+    name: nvidia-docker2
+    force: yes
+
+- name: Copy using inline content
+  copy:
+    content: '{ "default-runtime": "nvidia", "runtimes": { "nvidia": { "path": "/usr/bin/nvidia-container-runtime", "runtimeArgs": [] } } }'
+    dest: /etc/docker/daemon.json
+
+- name: Restart Docker service
+  command: systemctl restart docker
+

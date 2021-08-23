@@ -1,0 +1,17 @@
+- name: Install Dashboard Kubernetes
+  command: "kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml"
+  become_user: ubiq
+
+- name: Copy Dashboard to remote 
+  copy:
+    src: "{{playbook_dir}}/utils/dashboard.yaml"
+    dest: "/home/ubiq"
+
+- name: Deploy Dashboard
+  command: "kubectl apply -f /home/ubiq/dashboard.yaml"
+  become_user: ubiq
+
+- name: Delete Dashboard Files
+  file:
+    path: /home/ubiq/dashboard.yaml
+    state: absent
